@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "thresholds": {
+    "soft_lines": 250,
+    "max_lines": 300,
+    "max_imports": 10
+  },
+  "layers": [
+    "rh_gate_contracts",
+    "rh_gate_io",
+    "rh_gate_config",
+    "rh_gate_challenge",
+    "rh_gate_scanners",
+    "rh_gate_engine",
+    "rh_arch_gate"
+  ],
+  "deny_imports": [
+    {
+      "from_prefix": "rh_gate_contracts",
+      "forbid_prefix": "rh_gate_engine",
+      "reason": "Layer 0 contracts must remain dependency-free"
+    },
+    {
+      "from_prefix": "rh_gate_scanners",
+      "forbid_prefix": "rh_gate_io",
+      "reason": "Pure static scanners must not perform file I/O"
+    }
+  ],
+  "exclude": [
+    "test_*.py"
+  ],
+  "challenge_manifest": null,
+  "allow_todo_in_tests": false
+}
