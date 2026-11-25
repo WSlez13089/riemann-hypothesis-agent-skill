@@ -1,6 +1,8 @@
-# `claude-rh-lean-architecture`
+# `riemann-hypothesis-agent-skill`
+### 黎曼猜想 1737 万行 Lean 4 仓库蒸馏 · AI Agent 工程架构 Skill 与零依赖静态门禁
 
 > **把 1737 万行黎曼猜想 Lean 4 证明仓库的“不塌方工程骨架”，蒸馏成任何 AI Coding Agent 都能直接挂载的 `SKILL.md` + 零依赖静态门禁。**
+> *Distilled from the 17.37M-line Riemann Hypothesis Lean 4 repository into a plug-and-play Agent Skill & zero-dependency static architecture gate.*
 
 [![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](#快速开始)
 [![Zero Dependencies](https://img.shields.io/badge/Dependencies-Zero%20(stdlib%20only)-brightgreen.svg)](#快速开始)
@@ -34,7 +36,7 @@
 
 ```bash
 # 例：挂载到项目本地 .agents/skills/
-git clone https://github.com/WSlez13089/claude-rh-lean-architecture.git .agents/skills/claude-rh-lean-architecture
+git clone https://github.com/WSlez13089/riemann-hypothesis-agent-skill.git .agents/skills/claude-rh-lean-architecture
 ```
 
 > 适用于支持 `SKILL.md` 规范的 AI 编程助手（Claude Code、Antigravity、Codex、Cursor 等）。加载后，Agent 在动工前会自动引导你：**冻结不可变验收契约 → 声明分层与黑名单 → 按微模块迭代并自检**。
@@ -44,8 +46,8 @@ git clone https://github.com/WSlez13089/claude-rh-lean-architecture.git .agents/
 无需 `pip install`，只要本机有 **Python 3.12+** 就能直接跑：
 
 ```bash
-git clone https://github.com/WSlez13089/claude-rh-lean-architecture.git
-cd claude-rh-lean-architecture
+git clone https://github.com/WSlez13089/riemann-hypothesis-agent-skill.git
+cd riemann-hypothesis-agent-skill
 
 # 1. 在你的目标项目里生成 .rh-arch.json（分层规则 + 屏蔽黑名单）
 python scripts/rh_arch_gate.py init-config /path/to/your-repo
@@ -121,7 +123,7 @@ python -W error -m unittest discover -s scripts -v
 ## 仓库结构
 
 ```text
-claude-rh-lean-architecture/
+riemann-hypothesis-agent-skill/
 ├── SKILL.md                          # Agent 行为协议（RH-01 ~ RH-07 四阶段工作流）
 ├── references/
 │   └── empirical-archaeology.md      # N=2,578 分层抽样实证与微观代码考古报告
