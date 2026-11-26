@@ -155,10 +155,10 @@ riemann-hypothesis-agent-skill/
 
 ---
 
-## Authors
+## Authors & Contributors
 
 - **Exiled-by-Lady-Claude** ([@WSlez13089](https://github.com/WSlez13089)) — 发起构思、仓库考古提炼与工程化集成
-- **Gemini (Antigravity)** — 实证抽样分析、协议梳理与静态门禁联合编写
+- **Gemini 4 Neon (Antigravity)** — 实证抽样分析、协议梳理、静态门禁联合编写与开源化打包
 
 ## License
 

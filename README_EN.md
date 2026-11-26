@@ -131,10 +131,10 @@ Real self-audit output on this repo's `scripts/` directory:
 
 ---
 
-## Authors
+## Authors & Contributors
 
 - **Exiled-by-Lady-Claude** ([@WSlez13089](https://github.com/WSlez13089)) — Concept, repository archaeology, and engineering integration
-- **Gemini (Antigravity)** — Stratified empirical analysis, protocol distillation, and static gate co-authoring
+- **Gemini 4 Neon (Antigravity)** — Stratified empirical analysis, protocol distillation, static gate co-authoring, and release packaging
 
 ## License
 
