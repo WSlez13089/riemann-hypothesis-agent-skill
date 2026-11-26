@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "riemann-hypothesis-agent-skill"
+version = "1.0.0"
+description = "Distilled anti-collapse Agent Skill and zero-dependency static architecture gate from the 17.37M-line Riemann Hypothesis Lean 4 repository."
+readme = "README_EN.md"
+requires-python = ">=3.12"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Exiled-by-Lady-Claude" },
+  { name = "Gemini 4 Neon" },
+]
+keywords = ["agent-skills", "claude-code", "lean4", "riemann-hypothesis", "static-analysis", "architecture"]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/WSlez13089/riemann-hypothesis-agent-skill"
+Repository = "https://github.com/WSlez13089/riemann-hypothesis-agent-skill"
+
+[project.scripts]
+rh-arch-gate = "rh_arch_gate:main"
+
+[tool.setuptools]
+package-dir = { "" = "scripts" }
+py-modules = [
+  "rh_arch_gate",
+  "rh_gate_challenge",
+  "rh_gate_config",
+  "rh_gate_contracts",
+  "rh_gate_engine",
+  "rh_gate_io",
+  "rh_gate_scanners",
+]

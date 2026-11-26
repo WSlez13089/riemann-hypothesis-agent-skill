@@ -48,25 +48,33 @@ git clone https://github.com/WSlez13089/riemann-hypothesis-agent-skill.git .agen
 
 ### 方式二：作为独立静态门禁 CLI 使用
 
-无需 `pip install`，只要本机有 **Python 3.12+** 就能直接跑：
+无需任何第三方依赖，支持 **`uvx` 零克隆秒跑**、**`uv` / `pipx` 全局安装**或直接用 **Python 3.12+** 运行：
 
 ```bash
-git clone https://github.com/WSlez13089/riemann-hypothesis-agent-skill.git
-cd riemann-hypothesis-agent-skill
+# 最快体验：免克隆一行直接跑（需安装 uv）
+uvx --from git+https://github.com/WSlez13089/riemann-hypothesis-agent-skill.git rh-arch-gate audit .
 
-# 1. 在你的目标项目里生成 .rh-arch.json（分层规则 + 屏蔽黑名单）
-python scripts/rh_arch_gate.py init-config /path/to/your-repo
+# 或全局安装为本地命令（uv / pipx / pip 任选）
+uv tool install git+https://github.com/WSlez13089/riemann-hypothesis-agent-skill.git
+# pipx install git+https://github.com/WSlez13089/riemann-hypothesis-agent-skill.git
+```
+
+安装后即可直接使用 `rh-arch-gate`（或克隆后用 `python scripts/rh_arch_gate.py`）：
+
+```bash
+# 1. 在你的目标项目里生成 .rh-arch.json（分层规则 + BuildAid 风格检索/引用黑名单）
+rh-arch-gate init-config /path/to/your-repo
 
 # 2. 编码前先冻结“不可变验收靶子”（把核心契约/测试锁进 SHA256 清单）
-python scripts/rh_arch_gate.py freeze-challenge /path/to/your-repo \
+rh-arch-gate freeze-challenge /path/to/your-repo \
   --files src/contracts.py tests/test_contract.py \
   -o .rh-challenge.json --json
 
 # 3. 每次改完代码跑一次架构门禁（检查体积、扇入、逃生舱、越界、循环依赖）
-python scripts/rh_arch_gate.py audit /path/to/your-repo --json
+rh-arch-gate audit /path/to/your-repo --json
 
 # 4. 交付前做零信任验真（确认 AI 没有在迭代中偷偷篡改验收测试或契约）
-python scripts/rh_arch_gate.py verify-challenge /path/to/your-repo --manifest .rh-challenge.json --json
+rh-arch-gate verify-challenge /path/to/your-repo --manifest .rh-challenge.json --json
 ```
 
 运行门禁自身单元测试：

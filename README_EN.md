@@ -47,25 +47,33 @@ Once loaded, your AI coding agent follows a strict 4-stage loop: **Freeze immuta
 
 ### Option 2: Use as a Standalone Static Gate CLI
 
-No `pip install` needed—just **Python 3.12+**:
+Zero third-party dependencies. Run directly with **`uvx`** (no clone needed), install via **`uv` / `pipx`**, or run with **Python 3.12+**:
 
 ```bash
-git clone https://github.com/WSlez13089/riemann-hypothesis-agent-skill.git
-cd riemann-hypothesis-agent-skill
+# Instant try without cloning (requires uv)
+uvx --from git+https://github.com/WSlez13089/riemann-hypothesis-agent-skill.git rh-arch-gate audit .
 
+# Or install globally as a CLI tool (uv / pipx / pip)
+uv tool install git+https://github.com/WSlez13089/riemann-hypothesis-agent-skill.git
+# pipx install git+https://github.com/WSlez13089/riemann-hypothesis-agent-skill.git
+```
+
+Once installed, run `rh-arch-gate` directly (or `python scripts/rh_arch_gate.py` from a local clone):
+
+```bash
 # 1. Initialize .rh-arch.json (layer order + BuildAid-style deny_imports)
-python scripts/rh_arch_gate.py init-config /path/to/your-repo
+rh-arch-gate init-config /path/to/your-repo
 
 # 2. Freeze immutable acceptance targets (SHA256 manifest, Challenge.lean style)
-python scripts/rh_arch_gate.py freeze-challenge /path/to/your-repo \
+rh-arch-gate freeze-challenge /path/to/your-repo \
   --files src/contracts.py tests/test_contract.py \
   -o .rh-challenge.json --json
 
 # 3. Audit architecture after changes (file size, fan-in, escape hatches, cycles)
-python scripts/rh_arch_gate.py audit /path/to/your-repo --json
+rh-arch-gate audit /path/to/your-repo --json
 
 # 4. Zero-trust verification before delivery (ensure targets were never tampered with)
-python scripts/rh_arch_gate.py verify-challenge /path/to/your-repo --manifest .rh-challenge.json --json
+rh-arch-gate verify-challenge /path/to/your-repo --manifest .rh-challenge.json --json
 ```
 
 Run the self-test suite:
