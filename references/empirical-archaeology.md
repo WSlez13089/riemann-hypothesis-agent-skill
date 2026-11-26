@@ -1,8 +1,10 @@
 # 实证考古报告：从 Claude × Alpöge 黎曼猜想 Lean 4 仓库反推超大型 Agent 工程范式
 
-本报告基于 2026-11-25 对开源仓库 `leanprover-community/riemann-hypothesis` 完整快照（对应 2026-11-20 Levent Alpöge 与 Anthropic 内部前沿版 Claude 公布的 RH/GRH 形式化证明）的直接源码抽样与配置审计。
+本报告基于 2026-11-25 对开源仓库 `leanprover-community/riemann-hypothesis` 本地快照（对应 2026-11-20 Levent Alpöge 与 Anthropic 内部前沿版 Claude 公布的 RH/GRH 形式化证明）的直接源码抽样与配置审计。
 
 ---
+
+**复现说明：** 原始分析记录了日期及随机种子，未记录准确抽样 commit。上游 [README](https://github.com/leanprover-community/riemann-hypothesis) 标明 `40e56bab` 为未经修改的原提交，仅作为溯源参考，不等价于本次抽样快照。分层限额抽样得到的合并分位数描述样本，不自动代表全库总体。下文工程映射为待验证的设计假设，不代表已证明因果效果。
 
 ## 1. 仓库客观体量与基线数据
 
@@ -35,7 +37,7 @@
 - **全样本文件行数**：`P10=13`, `P25=31`, **`P50=82`**, `P75=167`, `P90=274`, `P95=353`, `P99=608`。
 - **单文件直接 `import` 数**：**`P50=3`**, `P90=7`, `P99=18`。
 - **最频繁的文件命名后缀**：`*Imports.lean`（全库共 **418 个**），其次为 `Bound`、`St`（Statement）、`Eq`、`Defs`、`Lift`、`Map`、`Bridge`、`Iso`。
-- **声明与局部作用域特征**：全库所有自定义记号均为 `local` 或 `scoped`（样本出现 1,626 次），0 全局符号污染；局部中间步骤（`have`）在 2,578 个文件中出现 41,459 次（高度线性化的局部步骤分解）。
+- **声明与局部作用域特征**：全库所有自定义记号均为 `local` 或 `scoped`（样本出现 1,626 次），样本中未见全局记号污染；局部中间步骤（`have`）在 2,578 个文件中出现 41,459 次（高度线性化的局部步骤分解）。
 
 ---
 
@@ -53,11 +55,11 @@
 run_cmd Lean.modifyEnv fun env => Lean.LibrarySuggestions.nameDenyListExt.addEntry env "CompanionTheory"
 ```
 分别将 `CompanionTheory`、`CrystallineSemistableComparison`、`GlobalTheory`、`PositivityTheory`、`UpperTheory` 移出自动库检索建议范围。
-- **工程映射**：当代码库超过数万行时，检索/补全噪声会直接引发 Agent 幻觉和错层引用。必须显式维护分层依赖边界与排除黑名单（`.rh-arch.json` 的 `layers` + `deny_imports`）。
+- **工程映射**：当代码库超过数万行时，检索/补全噪声可能增加 Agent 幻觉和错层引用的风险。必须显式维护分层依赖边界与排除黑名单（`.rh-arch.json` 的 `layers` + `deny_imports`）。
 
 ### 证据 C：418 个 `*Imports.lean` 聚合门面与声明/实现分离
 例如 `CompanionTheory/AutomorphicTheory/PieriRules/PieriDegreeBounds/` 中，将 `*Statement.lean`（纯声明）、`Imports.lean`（依赖门面）、`Definitions/`（定义）与 `Proofs/`（实现）严格拆开，保证叶节点文件的 `import` 数量停留在 3–4 行。
-- **工程映射**：把“类型契约”、“子包重导出门面”与“核心逻辑实现”拆成小文件，既能显著降低 Agent 每次编辑需要读入的上下文，又能大幅减少增量编译/单测波及范围。
+- **工程映射**：把“类型契约”、“子包重导出门面”与“核心逻辑实现”拆成小文件，有望减少每次编辑需读取的上下文和增量验证波及范围（仍需对照评估）。
 
 ### 证据 D：元编程自动变体派生（`CutCptCopy.lean`，91 行）
 当需要将一整条依赖链上的声明批量改写成紧支集（`Cpt`）变体时，作者没有让 LLM 手工复制粘贴几十个文件，而是编写 91 行确定性元程序 `toCopy` / `subst` / `copyAll`：
@@ -75,5 +77,5 @@ run_cmd Lean.modifyEnv fun env => Lean.LibrarySuggestions.nameDenyListExt.addEnt
 ## 4. 不可偷师的真实边界（防过度乐观）
 
 1. **过程轨迹缺失**：最终源码不包含 41 天里失败的证明分支、人类数学家对关键思路（如转向 Stepanov 方法 + `sqrt(X)` 长度 Theta lifts 链）的直觉引导。
-2. **形式化内核红利**：Lean 4 内核提供 100% 逻辑保真裁判，而通用软件工程（Python/TS/Go）没有等价的完备数学内核，因此必须用**强类型检查 + 契约测试 + 属性测试 + 静态安全审计**组合逼近确定性裁判。
+2. **形式化内核红利**：Lean 4 内核提供相对于其形式系统与依赖假设的证明验证，而通用软件工程（Python/TS/Go）没有等价的完备数学内核，因此必须用**强类型检查 + 契约测试 + 属性测试 + 静态安全审计**组合逼近确定性裁判。
 3. **算力反馈闭环差异**：百核大内存机器支持极高频率的“生成-编译-回溯”搜索；个人开发机上应通过**缩小模块粒度（≤120行）+ 增量单测**来模拟低延迟反馈闭环。

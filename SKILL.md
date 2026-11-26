@@ -13,7 +13,9 @@ description: 提炼自 Anthropic 内部版 Claude 与 Levent Alpöge 2026-11-20 
 ## 诚实边界（先厘清能偷师什么、不能偷师什么）
 
 - **能复现的（工程骨架）**：极端微模块粒度、零信任靶子隔离（Comparator 模式）、声明/门面/实现三层分离、检索与引用黑名单（`BuildAid` 模式）、零逃生舱门禁、确定性代码生成替代人工复制、内容寻址增量验证。
-- **不可仅靠 Prompt 复现的（能力底座）**：前沿模型本身的数学直觉、人类专家方向纠偏、以及数百 GB 内存下由编译器内核驱动的高并发试错搜索树。本技能通过**把架构纪律与确定性门禁前置**，最大化压榨现有 Agent 在大型工程中的稳定性上限。
+- **不可仅靠 Prompt 复现的（能力底座）**：前沿模型本身的数学直觉、人类专家方向纠偏、以及数百 GB 内存下由编译器内核驱动的高并发试错搜索树。本技能通过**把架构纪律与确定性门禁前置**，探索现有 Agent 在大型工程中的稳定性提升。尚未通过对照实验验证能力增益。
+
+> 规则阈值是可调初始策略。哈希清单、配置和验证器需要受保护的可信基线；本地哈希不是访问控制。轻量扫描不能替代编译、测试及人工验收。
 
 ---
 
@@ -21,9 +23,9 @@ description: 提炼自 Anthropic 内部版 Claude 与 Levent Alpöge 2026-11-20 
 
 | 编号 | 铁律名称 | 黎曼仓库实证来源 | 强制落地要求 |
 | --- | --- | --- | --- |
-| **RH-01** | 极端微模块与低扇入 | `Development` 14.19 万文件 P50 仅 **41 行**（全库 P50=82 行）；单文件 `import` P50 仅 **3 个**（P90=7） | 单文件软上限 **120 行**、硬上限 **300 行**；单文件直接导入 **≤ 8**。禁止让 Agent 持续膨胀千行巨型文件 |
+| **RH-01** | 极端微模块与低直接导入数 | `Development` 14.19 万文件 P50 仅 **41 行**（合并分层样本 P50=82 行）；单文件 `import` P50 仅 **3 个**（P90=7） | 单文件软上限 **120 行**、硬上限 **300 行**；单文件直接导入 **≤ 8**。禁止让 Agent 持续膨胀千行巨型文件 |
 | **RH-02** | 零信任靶子隔离 | `Challenge.lean` 仅依赖标准库锁死 5 个契约；`Main.lean` 仅 12 行薄胶水对接；`comparator.json` 独立内核裁决 | 编码前先冻结只读接口/验收靶子并落盘 SHA256 清单；实现期间禁止修改靶子，交付前独立验真 |
-| **RH-03** | 声明 / 门面 / 实现分离 | 全库 418 个 `*Imports.lean` 门面 + `Definitions`/`Statement` 与 `Proofs` 分离，将叶节点扇入压到 3 | 公共类型/协议单独成文件；子包对外只暴露薄门面（facade/barrel），实现文件不得跨包直插私有细节 |
+| **RH-03** | 声明 / 门面 / 实现分离 | 全库 418 个 `*Imports.lean` 门面 + `Definitions`/`Statement` 与 `Proofs` 分离，将样本直接导入数中位数为 3 | 公共类型/协议单独成文件；子包对外只暴露薄门面（facade/barrel），实现文件不得跨包直插私有细节 |
 | **RH-04** | 分层边界与检索黑名单 | `BuildAid/D1..D5.lean` 主动把无关高层命名空间写入 `nameDenyListExt`，防止自动检索污染上下文 | 在 `.rh-arch.json` 显式声明层序 `layers`（上层仅可依赖下层）及 `deny_imports` 黑名单，阻断跨层幻觉引用 |
 | **RH-05** | 零隐式魔法与零逃生舱 | `lakefile.toml` 禁用 `autoImplicit`、`local/scoped` 隔离符号、静态扫描 0 `sorry/admit/axiom/unsafe` | 禁用通配符导入（`import *`）、动态 `eval/exec`、无证据跳过测试或占位桩（`NotImplementedError`/`TODO`/`sorry`） |
 | **RH-06** | 规律变体改用生成器 | `CutCptCopy.lean`（91 行）遍历依赖闭包自动派生变体声明并交内核验真，拒绝手工复制粘贴 | 超过 3 处结构同构的样板/变体代码，禁止 Agent 逐份手抄；改为确定性生成脚本 + 编译器/测试全量校验 |
@@ -34,7 +36,7 @@ description: 提炼自 Anthropic 内部版 Claude 与 Levent Alpöge 2026-11-20 
 ## 标准四阶段执行流
 
 ### Stage 0：冻结不可变验收靶子（编码前）
-先把目标契约（接口定义、核心测试或验收规范）写入独立文件，并用门禁工具计算 SHA256 锁死，彻底杜绝 Agent 在迭代中“偷偷改测试/降标准”：
+先把目标契约（接口定义、核心测试或验收规范）写入独立文件，并用门禁工具计算 SHA256 锁死，在可信基线不变的前提下检测 Agent 在迭代中“偷偷改测试/降标准”：
 
 ```powershell
 rh-arch-gate freeze-challenge <repo_dir> --files tests/test_contract.py src/contracts.py -o .rh-challenge.json --json
@@ -62,7 +64,7 @@ rh-arch-gate init-config <repo_dir> -o <repo_dir>\.rh-arch.json
 ```
 
 ### Stage 2：微模块迭代与静态门禁自检（每次改动后）
-每完成一个微模块，先跑静态门禁检查体积、扇入、逃生舱、隐式污染、跨层依赖与循环依赖（SCC）：
+每完成一个微模块，先跑静态门禁检查体积、直接导入数、逃生舱、隐式污染、跨层依赖与循环依赖（SCC）：
 
 ```powershell
 rh-arch-gate audit <repo_dir> --config <repo_dir>\.rh-arch.json --json

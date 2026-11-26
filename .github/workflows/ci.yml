@@ -35,6 +35,9 @@ jobs:
       - name: Run rh-arch-gate strict self-audit
         run: python scripts/rh_arch_gate.py audit scripts --config .rh-arch.json --strict --json
 
+      - name: Reproduce public demo
+        run: python examples/quick_demo.py
+
       - name: Verify zero-dependency CLI packaging
         run: |
           python -m pip install --no-deps .
