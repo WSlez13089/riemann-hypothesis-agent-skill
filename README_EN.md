@@ -5,6 +5,7 @@
 
 > **We sampled 2,578 files from the 17.37M-line Claude × Levent Alpöge Riemann Hypothesis Lean 4 repository (`leanprover-community/riemann-hypothesis`) and distilled its anti-collapse engineering skeleton into a plug-and-play `SKILL.md` + zero-dependency static architecture gate.**
 
+[![CI](https://github.com/WSlez13089/riemann-hypothesis-agent-skill/actions/workflows/ci.yml/badge.svg)](https://github.com/WSlez13089/riemann-hypothesis-agent-skill/actions/workflows/ci.yml)
 [![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](#quick-start)
 [![Zero Dependencies](https://img.shields.io/badge/Dependencies-Zero%20(stdlib%20only)-brightgreen.svg)](#quick-start)
 [![Agent Skill](https://img.shields.io/badge/Agent-Skill%20%2B%20CLI%20Gate-orange.svg)](#option-1-use-as-an-agent-skill-recommended)

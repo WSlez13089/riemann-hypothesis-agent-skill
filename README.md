@@ -6,6 +6,7 @@
 > **把 1737 万行黎曼猜想 Lean 4 证明仓库的“不塌方工程骨架”，蒸馏成任何 AI Coding Agent 都能直接挂载的 `SKILL.md` + 零依赖静态门禁。**
 > *Distilled from the 17.37M-line Riemann Hypothesis Lean 4 repository into a plug-and-play Agent Skill & zero-dependency static architecture gate.*
 
+[![CI](https://github.com/WSlez13089/riemann-hypothesis-agent-skill/actions/workflows/ci.yml/badge.svg)](https://github.com/WSlez13089/riemann-hypothesis-agent-skill/actions/workflows/ci.yml)
 [![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](#快速开始)
 [![Zero Dependencies](https://img.shields.io/badge/Dependencies-Zero%20(stdlib%20only)-brightgreen.svg)](#快速开始)
 [![Agent Skill](https://img.shields.io/badge/Agent-Skill%20%2B%20CLI%20Gate-orange.svg)](#作为-agent-skill-使用)
