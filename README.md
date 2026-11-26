@@ -1,3 +1,5 @@
+**简体中文** | [English](README_EN.md)
+
 # `riemann-hypothesis-agent-skill`
 ### 黎曼猜想 1737 万行 Lean 4 仓库蒸馏 · AI Agent 工程架构 Skill 与零依赖静态门禁
 
@@ -35,7 +37,10 @@
 把本仓库放进你的 Agent 技能目录即可按标准 `SKILL.md` 自动发现与按需加载：
 
 ```bash
-# 例：挂载到项目本地 .agents/skills/
+# 使用 skills CLI 一键安装
+npx skills add WSlez13089/riemann-hypothesis-agent-skill
+
+# 或手动克隆到项目本地 .agents/skills/
 git clone https://github.com/WSlez13089/riemann-hypothesis-agent-skill.git .agents/skills/claude-rh-lean-architecture
 ```
 
