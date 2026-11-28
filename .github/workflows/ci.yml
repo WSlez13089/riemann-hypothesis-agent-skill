@@ -32,6 +32,9 @@ jobs:
       - name: Run offline unit tests
         run: python -W error -m unittest discover -s scripts -v
 
+      - name: Run reproducible CLI demo
+        run: python examples/reproducible_demo.py
+
       - name: Run rh-arch-gate strict self-audit
         run: python scripts/rh_arch_gate.py audit scripts --config .rh-arch.json --strict --json
 

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" width="1200" height="320">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b1020"/>
+      <stop offset="55%" stop-color="#11182c"/>
+      <stop offset="100%" stop-color="#18122b"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#60a5fa"/>
+      <stop offset="50%" stop-color="#a78bfa"/>
+      <stop offset="100%" stop-color="#34d399"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="320" rx="18" fill="url(#bg)"/>
+  <rect x="2" y="2" width="1196" height="316" rx="16" fill="none" stroke="#283556" stroke-width="2"/>
+  <circle cx="1060" cy="70" r="140" fill="#7c3aed" opacity="0.10"/>
+  <circle cx="160" cy="270" r="130" fill="#2563eb" opacity="0.10"/>
+
+  <rect x="56" y="46" width="236" height="30" rx="15" fill="#172554" stroke="#3b82f6" stroke-width="1"/>
+  <text x="174" y="66" text-anchor="middle" fill="#93c5fd" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="600">RH ARCH GATE · v1.0.0</text>
+
+  <text x="56" y="128" fill="#f8fafc" font-family="system-ui,-apple-system,Segoe UI,sans-serif" font-size="42" font-weight="800">Stop AI Spaghetti &amp; Test Cheating</text>
+  <text x="56" y="168" fill="#cbd5e1" font-family="system-ui,-apple-system,Segoe UI,sans-serif" font-size="20">Anti-collapse Agent Skill &amp; zero-dep static gate distilled from the 17.37M-line Riemann Hypothesis Lean 4 repo</text>
+  <rect x="56" y="190" width="420" height="4" rx="2" fill="url(#accent)"/>
+
+  <g font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="14" font-weight="600">
+    <rect x="56" y="222" width="214" height="44" rx="10" fill="#161f36" stroke="#334155"/>
+    <text x="163" y="249" text-anchor="middle" fill="#60a5fa">P50 = 41 Lines / File</text>
+
+    <rect x="286" y="222" width="206" height="44" rx="10" fill="#161f36" stroke="#334155"/>
+    <text x="389" y="249" text-anchor="middle" fill="#a78bfa">Zero Dependencies</text>
+
+    <rect x="508" y="222" width="224" height="44" rx="10" fill="#161f36" stroke="#334155"/>
+    <text x="620" y="249" text-anchor="middle" fill="#34d399">SHA256 Locked Tests</text>
+
+    <rect x="748" y="222" width="268" height="44" rx="10" fill="#161f36" stroke="#334155"/>
+    <text x="882" y="249" text-anchor="middle" fill="#fbbf24">Py / TS / JS / Rust / Go / Lean</text>
+  </g>
+</svg>

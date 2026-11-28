@@ -1,120 +1,99 @@
-**简体中文** | [English](README_EN.md)
+**English** | [简体中文](README_ZH.md)
+
+<p align="center">
+  <img src="assets/banner.svg" alt="RH Arch Gate Banner" width="100%">
+</p>
 
 # `riemann-hypothesis-agent-skill`
-### 黎曼猜想 1737 万行 Lean 4 仓库蒸馏 · AI Agent 工程架构 Skill 与零依赖静态门禁
 
-> **把 1737 万行黎曼猜想 Lean 4 证明仓库的“不塌方工程骨架”，蒸馏成任何 AI Coding Agent 都能直接挂载的 `SKILL.md` + 零依赖静态门禁。**
-> *Distilled from the 17.37M-line Riemann Hypothesis Lean 4 repository into a plug-and-play Agent Skill & zero-dependency static architecture gate.*
+**Stop AI coding agents from writing 1,000-line spaghetti files and silently weakening your tests.**
+
+> **Distilled from the 17.37M-line Claude × Levent Alpöge Riemann Hypothesis Lean 4 repository (`leanprover-community/riemann-hypothesis`) into a plug-and-play `SKILL.md` + zero-dependency static architecture gate (`RH001`–`RH007`).**
 
 [![CI](https://github.com/WSlez13089/riemann-hypothesis-agent-skill/actions/workflows/ci.yml/badge.svg)](https://github.com/WSlez13089/riemann-hypothesis-agent-skill/actions/workflows/ci.yml)
-[![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](#快速开始)
-[![Zero Dependencies](https://img.shields.io/badge/Dependencies-Zero%20(stdlib%20only)-brightgreen.svg)](#快速开始)
-[![Agent Skill](https://img.shields.io/badge/Agent-Skill%20%2B%20CLI%20Gate-orange.svg)](#作为-agent-skill-使用)
+[![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](#quick-start)
+[![Zero Dependencies](https://img.shields.io/badge/Dependencies-Zero%20(stdlib%20only)-brightgreen.svg)](#quick-start)
+[![Agent Skill](https://img.shields.io/badge/Agent-Skill%20%2B%20CLI%20Gate-orange.svg)](#option-1-use-as-an-agent-skill-recommended)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
 
-## 为什么做这个项目？
+## Why This Exists
 
-2026 年 11 月 20 日，Anthropic 数学家 Levent Alpöge 与内部版 Claude 公开了黎曼猜想 / GRH 的 Lean 4 形式化证明仓库（`leanprover-community/riemann-hypothesis`）：
-**`175,187` 个源文件、`17,374,215` 行代码、0 行注释、`818,755` 条定理**。
+On November 20, 2026, Anthropic mathematician Levent Alpöge and an internal frontier version of Claude published a formal Lean 4 proof of the Riemann Hypothesis & GRH (`leanprover-community/riemann-hypothesis`):
+**175,187 source files, 17,374,215 lines of code, 0 comments, and 818,755 theorems.**
 
-大多数人看到这个新闻只会感叹“AI 数学好强”，但如果你把仓库拉下来做微观代码考古，会发现它能写到 1700 万行还不散架，靠的不是玄学，而是一套极其冷酷的**工程防塌方纪律**：
-- 主体 14 万个文件里，**中位数（P50）只有 41 行**，单文件 `import` **P50 只有 3 个**；
-- 验收靶子（`Challenge.lean` + `comparator.json`）与实现彻底物理隔离，**绝不允许在迭代中偷偷降标准**；
-- 主动用 `BuildAid` 黑名单屏蔽无关高层命名空间，**防止上下文检索污染引发 Agent 幻觉引用**；
-- 静态门禁把隐式魔法与逃生舱（`sorry`/`admit`、`import *`、占位桩）**全部归零**。
+Most commentary stops at *"AI is great at math."* When you inspect the repository itself, it did not survive 17 million lines by magic—it survived because of ruthless **anti-collapse engineering discipline**:
 
-我们以固定随机种子对全库 10 个顶层目录做了分层抽样（`N = 2,578`），把这套可迁移的工程骨架蒸馏成了两样东西：
-1. **一本给 AI 看的行动铁律**（[`SKILL.md`](SKILL.md)）：让 Claude Code / Cursor / Codex / Antigravity 在写大型项目时先锁靶子、再分层、只写微模块；
-2. **一把人类也能直接跑的静态门禁**（[`scripts/rh_arch_gate.py`](scripts/rh_arch_gate.py)）：纯 Python 标准库、零第三方依赖，支持 Python / Lean / TS / JS / Rust / Go。
+- In a fixed-seed stratified sample (`N = 2,578` across all 10 top-level directories, with `Development/` alone holding 141,928 files), **median file length (P50) is just 41 lines** and **median imports per file is 3**;
+- Acceptance targets (`Challenge.lean` + `comparator.json`) are strictly isolated from implementation so **criteria can never be silently weakened during iteration**;
+- `BuildAid` explicitly blocks unrelated high-level namespaces (`nameDenyListExt`) to **prevent context retrieval noise and hallucinated cross-layer imports**;
+- Static verification enforces **zero implicit magic and zero escape hatches** (`0` `sorry`/`admit`/`axiom`/`unsafe`, `0` wildcard imports).
+
+We turned those exact patterns into two zero-bloat artifacts for everyday software repos (Python, TypeScript, JavaScript, Rust, Go, and Lean):
+
+1. **An Agent Protocol ([`SKILL.md`](SKILL.md))**: Instructs Claude Code, Cursor, Codex, and Antigravity to freeze acceptance contracts first, declare strict layers + deny-lists, and iterate in small DAG-clean modules.
+2. **A Standalone Static Gate ([`scripts/rh_arch_gate.py`](scripts/rh_arch_gate.py))**: Pure Python 3.12+ standard library, zero external dependencies, deterministic JSON output.
+
+<p align="center">
+  <img src="assets/demo-comparison.svg" alt="RH Arch Gate Before and After Comparison" width="100%">
+</p>
 
 ---
 
-## 快速开始
+## Quick Start
 
-### 方式一：作为 Agent Skill 使用（推荐）
+### Option 1: Use as an Agent Skill (Recommended)
 
-把本仓库放进你的 Agent 技能目录即可按标准 `SKILL.md` 自动发现与按需加载：
+Install via [`skills.sh`](https://skills.sh) / Vercel Skills CLI, or clone directly into your agent skills folder:
 
 ```bash
-# 使用 skills CLI 一键安装
+# Install with skills CLI
 npx skills add WSlez13089/riemann-hypothesis-agent-skill
 
-# 或手动克隆到项目本地 .agents/skills/
+# Or clone into your project's .agents/skills/
 git clone https://github.com/WSlez13089/riemann-hypothesis-agent-skill.git .agents/skills/claude-rh-lean-architecture
 ```
 
-> 适用于支持 `SKILL.md` 规范的 AI 编程助手（Claude Code、Antigravity、Codex、Cursor 等）。加载后，Agent 在动工前会自动引导你：**冻结不可变验收契约 → 声明分层与黑名单 → 按微模块迭代并自检**。
+### Option 2: Run the Reproducible Demo or Static CLI
 
-### 方式二：作为独立静态门禁 CLI 使用
-
-无需任何第三方依赖，支持 **`uvx` 零克隆秒跑**、**`uv` / `pipx` 全局安装**或直接用 **Python 3.12+** 运行：
+Zero third-party dependencies. Try the self-contained temp-repo demo or run `rh-arch-gate` directly with **`uvx`** / **`uv`** / **`pipx`** / **Python 3.12+**:
 
 ```bash
-# 最快体验：免克隆一行直接跑（需安装 uv）
+# Run the reproducible demo (clean baseline -> RH005/RH006/RH007 blocked -> restored PASS)
+python examples/reproducible_demo.py
+
+# Instant run on any repo without cloning (requires uv)
 uvx --from git+https://github.com/WSlez13089/riemann-hypothesis-agent-skill.git rh-arch-gate audit .
 
-# 或全局安装为本地命令（uv / pipx / pip 任选）
+# Or install globally as a CLI
 uv tool install git+https://github.com/WSlez13089/riemann-hypothesis-agent-skill.git
 # pipx install git+https://github.com/WSlez13089/riemann-hypothesis-agent-skill.git
 ```
 
-安装后即可直接使用 `rh-arch-gate`（或克隆后用 `python scripts/rh_arch_gate.py`）：
+4-stage workflow on your own codebase:
 
 ```bash
-# 1. 在你的目标项目里生成 .rh-arch.json（分层规则 + BuildAid 风格检索/引用黑名单）
+# 1. Initialize .rh-arch.json (layer order + BuildAid-style deny_imports)
 rh-arch-gate init-config /path/to/your-repo
 
-# 2. 编码前先冻结“不可变验收靶子”（把核心契约/测试锁进 SHA256 清单）
+# 2. Freeze immutable acceptance targets (SHA256 manifest, Challenge.lean style)
 rh-arch-gate freeze-challenge /path/to/your-repo \
   --files src/contracts.py tests/test_contract.py \
   -o .rh-challenge.json --json
 
-# 3. 每次改完代码跑一次架构门禁（检查体积、扇入、逃生舱、越界、循环依赖）
-rh-arch-gate audit /path/to/your-repo --json
+# 3. Audit architecture after AI edits (size, fan-in, escape hatches, layers, cycles)
+rh-arch-gate audit /path/to/your-repo --config /path/to/your-repo/.rh-arch.json --strict --json
 
-# 4. 交付前做零信任验真（确认 AI 没有在迭代中偷偷篡改验收测试或契约）
-rh-arch-gate verify-challenge /path/to/your-repo --manifest .rh-challenge.json --json
-```
-
-运行门禁自身单元测试：
-
-```bash
-python -W error -m unittest discover -s scripts -v
+# 4. Zero-trust verification before merge/delivery
+rh-arch-gate verify-challenge /path/to/your-repo --manifest /path/to/your-repo/.rh-challenge.json --json
 ```
 
 ---
 
-## 核心内容：从 1737 万行仓库提炼的七大铁律
+## Real-World Dogfooding Case Study
 
-| 编号 | 铁律 | 黎曼仓库里的实证数据 | 落地到你的项目里是什么 |
-| :--- | :--- | :--- | :--- |
-| **RH-01** | **极端微模块与低扇入** | `Development` 14.19 万文件 P50 仅 **41 行**；单文件 `import` P50 仅 **3 个** | 单文件软上限 **120 行**、硬上限 **300 行**；直接导入 **≤ 8**，禁止千行巨石文件 |
-| **RH-02** | **零信任靶子隔离** | `Challenge.lean` 仅依赖标准库锁死契约，`comparator.json` 独立裁决 | 编码前冻结只读接口/测试并生成 SHA256 清单，交付前独立验真 |
-| **RH-03** | **声明 / 门面 / 实现分离** | 全库 418 个 `*Imports.lean` 门面，`Statement` 与 `Proofs` 分离 | 公共类型单独成文件，子包只暴露薄门面，禁止跨包直插私有细节 |
-| **RH-04** | **分层边界与检索黑名单** | `BuildAid/D1..D5.lean` 主动把无关高层命名空间写入 `nameDenyListExt` | 在 `.rh-arch.json` 显式声明层序 `layers` 与 `deny_imports` 黑名单 |
-| **RH-05** | **零隐式魔法与零逃生舱** | 禁用 `autoImplicit`，全库静态扫描 0 `sorry/admit/axiom/unsafe` | 禁用 `import *`、`eval/exec`、占位桩（`NotImplementedError`/`TODO`/`pytest.skip`） |
-| **RH-06** | **规律变体改用生成器** | `CutCptCopy.lean`（91 行）自动派生变体声明，拒绝手工复制粘贴 | 超过 3 处同构样板代码改用确定性生成脚本 + 全量校验 |
-| **RH-07** | **确定性单任务与内容寻址** | `CACHE.md` 按源码+依赖哈希缓存、SHA256 逐件验真、子作业 `-j1` | 模块级并行、单任务确定性执行，不轻信过期缓存 |
-
----
-
-## 门禁规则速查与输出示例
-
-`rh_arch_gate.py` 会静态扫描代码库并输出结构化 JSON（不导入、不执行目标代码）：
-
-| 规则码 | 级别 | 拦什么问题 |
-| :--- | :--- | :--- |
-| `RH001` | WARN / HIGH | 单文件非空行数超过 `120`（警告）或 `300`（阻断） |
-| `RH002` | WARN / HIGH | 单文件直接导入超过 `8` 个（门面文件按配置豁免） |
-| `RH003` | HIGH | 逃生舱与未完成桩：`NotImplementedError`、`TODO`/`FIXME`、`pytest.skip`、`sorry`/`admit`/`unsafe` |
-| `RH004` | HIGH / WARN | 隐式魔法：`import *`、`eval`/`exec`、裸 `global`、无理由 `# type: ignore` |
-| `RH005` | HIGH | 逆向跨层依赖或命中 `deny_imports` 黑名单 |
-| `RH006` | HIGH | 模块间存在强连通循环依赖（Tarjan SCC 检测） |
-| `RH007` | HIGH | 冻结靶子缺失、哈希被篡改或被替换为符号链接 |
-
-对本项目自身 `scripts/` 目录执行自检的真实输出：
+When building a 9-module local Python operational toolkit (`agy_ops`), running `rh-arch-gate audit --strict` caught **6 `RH001`/`RH002` warnings** on the first pass (`cli.py` at 191 lines / 10 imports, `doctor.py` at 191 lines / 9 imports, `fallback.py` at 216 lines / 10 imports). Splitting out a dedicated HTTP client module (`chat_client.py`) and tightening imports brought the entire package to:
 
 ```json
 {
@@ -122,10 +101,11 @@ python -W error -m unittest discover -s scripts -v
   "tool": "rh-arch-gate",
   "status": "PASS",
   "metrics": {
-    "scanned_files": 7,
-    "lines_p50": 160,
-    "lines_max": 249,
-    "imports_p50": 4,
+    "scanned_files": 9,
+    "lines_p50": 109,
+    "lines_max": 152,
+    "imports_p50": 7,
+    "imports_p90": 8,
     "cycles_count": 0
   },
   "counts": { "ERROR": 0, "HIGH": 0, "WARN": 0 }
@@ -134,40 +114,79 @@ python -W error -m unittest discover -s scripts -v
 
 ---
 
-## 仓库结构
+## The 7 Iron Laws (`RH-01` ~ `RH-07`)
 
-```text
-riemann-hypothesis-agent-skill/
-├── SKILL.md                          # Agent 行为协议（RH-01 ~ RH-07 四阶段工作流）
-├── references/
-│   └── empirical-archaeology.md      # N=2,578 分层抽样实证与微观代码考古报告
-├── scripts/
-│   ├── .rh-arch.json                 # 本工具自身使用的分层架构配置（DOGFOODING）
-│   ├── rh_arch_gate.py               # CLI 入口（Layer 4）
-│   ├── rh_gate_engine.py             # 审计与 Tarjan SCC 环路检测引擎（Layer 3）
-│   ├── rh_gate_challenge.py          # 零信任靶子冻结与 SHA256 验真（Layer 2）
-│   ├── rh_gate_config.py             # 配置加载与默认模板（Layer 2）
-│   ├── rh_gate_scanners.py           # 多语言轻量静态扫描器（Layer 1）
-│   ├── rh_gate_io.py                 # 跨平台安全路径与严格 JSON I/O（Layer 1）
-│   ├── rh_gate_contracts.py          # 共享数据契约与常量（Layer 0，零内部依赖）
-│   └── test_rh_arch_gate.py          # 离线确定性单元测试（10 项全覆盖）
-├── LICENSE
-└── README.md
+See [Empirical Archaeology Report](references/empirical-archaeology.md) for the full stratified sampling methodology (`N = 2,578` sampled out of `175,187` repo files).
+
+| ID | Law | Empirical Finding in the RH Repo | Practical Rule in Your Repo |
+| :--- | :--- | :--- | :--- |
+| **RH-01** | **Extreme Micro-Modules & Low Fan-In** | `Development/` sample P50 = **41 lines**; imports P50 = **3** | Soft cap **120 lines**, hard cap **300 lines**; direct imports **≤ 8** |
+| **RH-02** | **Zero-Trust Target Isolation** | `Challenge.lean` imports only stdlib; `comparator.json` adjudicates independently | Freeze read-only contracts/tests into a SHA256 manifest before coding; verify before delivery |
+| **RH-03** | **Declaration / Facade / Impl Split** | 418 `*Imports.lean` facades; `Statement` separated from `Proofs` | Keep shared types separate; expose thin package facades; forbid reaching into private internals |
+| **RH-04** | **Layer Boundaries & Retrieval Blacklists** | `BuildAid/D1..D5.lean` adds unrelated namespaces to `nameDenyListExt` | Declare bottom-up `layers` and `deny_imports` in `.rh-arch.json` |
+| **RH-05** | **Zero Implicit Magic & Escape Hatches** | `autoImplicit` disabled; 0 `sorry/admit/axiom/unsafe` | Ban `import *`, `eval/exec`, and stubs (`NotImplementedError`, `TODO`, `pytest.skip`) |
+| **RH-06** | **Generate Regular Variants** | `CutCptCopy.lean` (91 lines) derives variants deterministically | Replace >3 isomorphic copy-pasted blocks with a deterministic generator + full verification |
+| **RH-07** | **Deterministic Tasks & Content Addressing** | `CACHE.md` hashes source + deps; SHA256 verified; `-j1` determinism | Module-level parallelism, deterministic runs, never trust unverified stale caches |
+
+---
+
+## Gate Rule Codes
+
+| Code | Severity | What It Catches |
+| :--- | :--- | :--- |
+| `RH001` | WARN / HIGH | Non-empty lines exceed `soft_lines` (`120` default) or `max_lines` (`300` default) |
+| `RH002` | WARN / HIGH | Direct imports exceed `max_imports` (`8` default; facade files configurable) |
+| `RH003` | HIGH | Escape hatches & stubs: `NotImplementedError`, `TODO`/`FIXME`, `pytest.skip`, `sorry`/`admit`/`unsafe` |
+| `RH004` | HIGH / WARN | Implicit magic: `import *`, `eval`/`exec`, bare `global`, unjustified `# type: ignore` |
+| `RH005` | HIGH | Upward/reverse layer import or `deny_imports` hit |
+| `RH006` | HIGH | Strongly connected dependency cycle (Tarjan SCC) |
+| `RH007` | HIGH | Frozen challenge file missing, modified, or replaced by a symlink |
+
+Run the self-test suite:
+
+```bash
+python -W error -m unittest discover -s scripts -v
 ```
 
 ---
 
-## 诚实边界
+## Repository Structure
 
-- **能复现的**：微模块粒度纪律、零信任靶子隔离、分层与屏蔽边界、零逃生舱门禁、确定性验证闭环。
-- **无法仅靠 Skill 复现的**：前沿基座模型本身的数学直觉、人类专家的方向纠偏，以及数百 GB 内存下由编译器内核驱动的高并发试错搜索算力。
+```text
+riemann-hypothesis-agent-skill/
+├── assets/
+│   ├── banner.svg                    # Homepage hero banner
+│   ├── demo-comparison.svg           # Before/after gate comparison
+│   └── social-preview.png            # 1280x640 GitHub Social Preview image
+├── examples/
+│   └── reproducible_demo.py          # Self-contained CI-verified temp-repo demo
+├── references/
+│   └── empirical-archaeology.md      # N=2,578 stratified sampling report
+├── scripts/
+│   ├── .rh-arch.json                 # Self-audit config (dogfooding)
+│   ├── rh_arch_gate.py               # CLI entrypoint
+│   ├── rh_gate_engine.py             # Audit & Tarjan SCC cycle detector
+│   ├── rh_gate_challenge.py          # Zero-trust target freeze & SHA256 verifier
+│   ├── rh_gate_config.py             # Config loader & default template
+│   ├── rh_gate_scanners.py           # Multi-language static scanners
+│   ├── rh_gate_io.py                 # Safe cross-platform paths & strict JSON I/O
+│   ├── rh_gate_contracts.py          # Shared immutable contracts (Layer 0)
+│   └── test_rh_arch_gate.py          # Offline deterministic unit tests
+├── SKILL.md                          # Agent protocol (RH-01 ~ RH-07 workflow)
+├── README.md                         # English documentation (default)
+├── README_ZH.md                      # 简体中文文档
+└── LICENSE                           # MIT
+```
 
----
+## Honest Boundaries
+
+- **What transfers cleanly:** Micro-module discipline, zero-trust target isolation, explicit layer/deny-list boundaries, zero escape hatches, and deterministic verification loops.
+- **What cannot be distilled into a skill alone:** Frontier base-model mathematical intuition, human expert steering, and hundreds of GBs of Lean kernel proof-search compute. Reported `P50` metrics in our archaeology note reflect the `N = 2,578` stratified sample across the upstream repository.
 
 ## Authors & Contributors
 
-- **Exiled-by-Lady-Claude** ([@WSlez13089](https://github.com/WSlez13089)) — 发起构思、仓库考古提炼与工程化集成
-- **Gemini 4 Neon (Antigravity)** — 实证抽样分析、协议梳理、静态门禁联合编写与开源化打包
+- **Exiled-by-Lady-Claude** ([@WSlez13089](https://github.com/WSlez13089)) — Concept, repository archaeology, and engineering integration
+- **Gemini 4 Neon (Antigravity)** — Stratified empirical analysis, protocol distillation, static gate co-authoring, and release packaging
 
 ## License
 

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 380" width="1120" height="380">
+  <rect width="1120" height="380" rx="14" fill="#0d1117"/>
+  <rect x="1" y="1" width="1118" height="378" rx="13" fill="none" stroke="#30363d"/>
+
+  <text x="40" y="42" fill="#f0f6fc" font-family="system-ui,-apple-system,Segoe UI,sans-serif" font-size="20" font-weight="700">Reproducible Gate Loop: Catch Violations Before Commit</text>
+
+  <!-- Left panel: Blocked -->
+  <rect x="40" y="64" width="500" height="282" rx="10" fill="#161b22" stroke="#f85149" stroke-width="1.5"/>
+  <rect x="40" y="64" width="500" height="36" rx="10" fill="#2b1418"/>
+  <text x="58" y="87" fill="#ff7b72" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="14" font-weight="700">✗ BLOCKED (exit 1) — Unchecked AI Edits</text>
+  <g font-family="ui-monospace,Menlo,Consolas,monospace" font-size="13" fill="#e6edf3">
+    <text x="58" y="128" fill="#8b949e">$ rh-arch-gate audit . --strict --manifest .rh-challenge.json</text>
+    <text x="58" y="160" fill="#ff7b72">[HIGH] RH001  service.py: 342 lines &gt; max_lines (300)</text>
+    <text x="58" y="186" fill="#ff7b72">[HIGH] RH005  core.py imports domain.service (layer breach)</text>
+    <text x="58" y="212" fill="#ff7b72">[HIGH] RH006  cycle detected: core &lt;-&gt; service (Tarjan SCC)</text>
+    <text x="58" y="238" fill="#ff7b72">[HIGH] RH007  tests/test_contract.py SHA256 mismatch!</text>
+    <text x="58" y="274" fill="#ffa657">counts: { "ERROR": 0, "HIGH": 4, "WARN": 1 }</text>
+    <text x="58" y="316" fill="#8b949e">→ Agent prevented from weakening tests or shipping spaghetti.</text>
+  </g>
+
+  <!-- Arrow -->
+  <text x="560" y="214" text-anchor="middle" fill="#60a5fa" font-family="system-ui,sans-serif" font-size="28" font-weight="800">→</text>
+
+  <!-- Right panel: Passed -->
+  <rect x="580" y="64" width="500" height="282" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.5"/>
+  <rect x="580" y="64" width="500" height="36" rx="10" fill="#112819"/>
+  <text x="598" y="87" fill="#56d364" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="14" font-weight="700">✓ PASS (exit 0) — Micro-Module Refactor + Verified Target</text>
+  <g font-family="ui-monospace,Menlo,Consolas,monospace" font-size="13" fill="#e6edf3">
+    <text x="598" y="128" fill="#8b949e">$ rh-arch-gate audit . --strict --manifest .rh-challenge.json</text>
+    <text x="598" y="160" fill="#7ee787">status: "PASS"  |  cycles_count: 0</text>
+    <text x="598" y="188" fill="#cbd5e1">metrics: { scanned_files: 9, lines_p50: 109, lines_max: 152 }</text>
+    <text x="598" y="216" fill="#cbd5e1">imports: { p50: 7, p90: 8, max: 8 }</text>
+    <text x="598" y="244" fill="#7ee787">challenge_verification: "VERIFIED (SHA256 intact)"</text>
+    <text x="598" y="274" fill="#56d364">counts: { "ERROR": 0, "HIGH": 0, "WARN": 0 }</text>
+    <text x="598" y="316" fill="#8b949e">→ Ready to merge with deterministic zero-trust evidence.</text>
+  </g>
+</svg>

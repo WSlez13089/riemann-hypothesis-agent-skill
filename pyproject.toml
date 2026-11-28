@@ -5,8 +5,8 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "riemann-hypothesis-agent-skill"
 version = "1.0.0"
-description = "Distilled anti-collapse Agent Skill and zero-dependency static architecture gate from the 17.37M-line Riemann Hypothesis Lean 4 repository."
-readme = "README_EN.md"
+description = "Stop AI agents from writing 1,000-line spaghetti & cheating tests — Agent Skill and zero-dep static gate distilled from the 17.37M-line Riemann Hypothesis Lean 4 repo."
+readme = "README.md"
 requires-python = ">=3.12"
 license = { file = "LICENSE" }
 authors = [
