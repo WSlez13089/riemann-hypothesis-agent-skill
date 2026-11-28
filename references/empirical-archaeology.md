@@ -1,79 +1,81 @@
-# 实证考古报告：从 Claude × Alpöge 黎曼猜想 Lean 4 仓库反推超大型 Agent 工程范式
+# Empirical Archaeology Report: Distilling Large-Scale Agent Architecture from Claude × Alpöge's Riemann Hypothesis Lean 4 Repository
 
-本报告基于 2026-11-25 对开源仓库 `leanprover-community/riemann-hypothesis` 完整快照（对应 2026-11-20 Levent Alpöge 与 Anthropic 内部前沿版 Claude 公布的 RH/GRH 形式化证明）的直接源码抽样与配置审计。
+**English** | [简体中文](empirical-archaeology.zh.md)
+
+This report documents direct source sampling and configuration auditing performed on `2026-11-25` against a complete snapshot of `leanprover-community/riemann-hypothesis` (corresponding to the `2026-11-20` publication by Levent Alpöge and an internal frontier version of Claude formalizing RH and GRH).
 
 ---
 
-## 1. 仓库客观体量与基线数据
+## 1. Repository Scale & Baseline Facts
 
-- **工具链锁定**：`leanprover/lean4:v4.33.1` + 官方 Mathlib tag `v4.33.1`（`0df444a360ea`）。
-- **总规模**（来自 `verification/NOTES.md` 及本地全量统计）：
-  - 原提交 `.lean` 文件数：**175,187**（含验证封装后共 **175,195**）
-  - 源码总大小：**982.83 MB**（1,030,531,854 bytes）
-  - 总行数：**17,374,215 行**（非空行 15,531,759 行，**0 行注释**）
-  - 声明数量：**818,755** 个 `theorem`/`lemma` + **242,067** 个 `def`/`structure`/`class`/`instance`/`inductive`
-  - 完整构建与验证开销：48 核 / 503 GB 内存服务器构建约 7–10 小时；导出 `solution.export` 单文件 61.57 GB（需 150–163 GB RAM 验真）。
+- **Pinned toolchain**: `leanprover/lean4:v4.33.1` + official Mathlib tag `v4.33.1` (`0df444a360ea`).
+- **Repository totals** (from `verification/NOTES.md` and full-tree file inventory):
+  - Submitted `.lean` files: **175,187** (**175,195** including verification wrappers)
+  - Total source size: **982.83 MB** (`1,030,531,854` bytes)
+  - Total lines: **17,374,215 lines** (`15,531,759` non-blank lines, **0 comments**)
+  - Declarations: **818,755** `theorem`/`lemma` declarations + **242,067** `def`/`structure`/`class`/`instance`/`inductive` declarations
+  - Build & verification footprint: ~7–10 hours on a 48-core / 503 GB RAM server; exported `solution.export` single file is `61.57 GB` (requiring `150–163 GB` RAM to replay/verify).
 
-## 2. 分层抽样实证（N = 2,578，固定随机种子 20261125）
+## 2. Stratified Random Sampling (`N = 2,578`, Fixed Seed `20261125`)
 
-我们对全部 10 个顶层目录执行分层随机抽样（每层至多 400 个文件，不足全采），实测统计如下：
+We drew a fixed-seed stratified random sample across all 10 top-level directories (capping at 400 files per directory, or taking all files when fewer than 400 exist):
 
-| 顶层模块 | 总文件数 | 样本 P50 行数 | 样本 P90 行数 | 样本最大行数 | 架构角色 |
+| Top-Level Directory | Total Files | Sample P50 Lines | Sample P90 Lines | Sample Max Lines | Architectural Role |
 | --- | ---: | ---: | ---: | ---: | --- |
-| `Development` | 141,928 | **41** | 212 | 665 | 主体原子证明与实现（占全库 81% 文件） |
-| `Formalism` | 18,254 | 115 | 368 | 6,929 | 核心框架、傅里叶/几何形式化与关键桥接 |
-| `GroundTheory` | 8,507 | 101 | 306 | 1,004 | 底层数学地基（局部/全局域、上同调等） |
-| `ReciprocityTheory` | 3,845 | 128 | 287 | 707 | 互反律与约化群/阿贝尔簇基础 |
-| `CompanionTheory` | 2,027 | 64 | 242 | 565 | 伴随理论与辅助界估计 |
-| `PositivityTheory` | 449 | 88 | 283 | 700 | 正定性理论 |
-| `Lemmata` | 167 | **40** | 92 | 364 | 高复用短引理集合 |
-| `BuildAid` | 5 | **4** | 4 | 4 | **检索/建议黑名单控制器** |
-| `Supplements` | 3 | **4** | 16 | 16 | **薄聚合胶水层** |
-| 顶层入口 (`ROOT`) | 3 | 16 | 27 | 27 | `Challenge.lean` / `Statements.lean` / `Main.lean` |
+| `Development` | 141,928 | **41** | 212 | 665 | Core atomic proofs & implementations (81% of all files) |
+| `Formalism` | 18,254 | 115 | 368 | 6,929 | Core framework, Fourier/geometric formalisms, bridges |
+| `GroundTheory` | 8,507 | 101 | 306 | 1,004 | Foundations (local/global fields, cohomology, etc.) |
+| `ReciprocityTheory` | 3,845 | 128 | 287 | 707 | Reciprocity laws, reductive groups, abelian varieties |
+| `CompanionTheory` | 2,027 | 64 | 242 | 565 | Companion theory & auxiliary bounds |
+| `PositivityTheory` | 449 | 88 | 283 | 700 | Positivity theory |
+| `Lemmata` | 167 | **40** | 92 | 364 | High-reuse short lemmata |
+| `BuildAid` | 5 | **4** | 4 | 4 | **Retrieval / suggestion blacklist controller** |
+| `Supplements` | 3 | **4** | 16 | 16 | **Thin aggregation glue** |
+| Top-level root (`ROOT`) | 3 | 16 | 27 | 27 | `Challenge.lean` / `Statements.lean` / `Main.lean` |
 
-### 关键分位数发现
-- **全样本文件行数**：`P10=13`, `P25=31`, **`P50=82`**, `P75=167`, `P90=274`, `P95=353`, `P99=608`。
-- **单文件直接 `import` 数**：**`P50=3`**, `P90=7`, `P99=18`。
-- **最频繁的文件命名后缀**：`*Imports.lean`（全库共 **418 个**），其次为 `Bound`、`St`（Statement）、`Eq`、`Defs`、`Lift`、`Map`、`Bridge`、`Iso`。
-- **声明与局部作用域特征**：全库所有自定义记号均为 `local` 或 `scoped`（样本出现 1,626 次），0 全局符号污染；局部中间步骤（`have`）在 2,578 个文件中出现 41,459 次（高度线性化的局部步骤分解）。
+### Key Quantile Findings
+- **Sample file length**: `P10=13`, `P25=31`, **`P50=82`**, `P75=167`, `P90=274`, `P95=353`, `P99=608`.
+- **Direct `import` count per file**: **`P50=3`**, `P90=7`, `P99=18`.
+- **Most frequent filename suffixes**: `*Imports.lean` (**418 files** across the repo), followed by `Bound`, `St` (Statement), `Eq`, `Defs`, `Lift`, `Map`, `Bridge`, and `Iso`.
+- **Scoping & local decomposition**: Custom notation across the repository uses `local` or `scoped` (`1,626` occurrences in the sample) with zero global symbol pollution; local intermediate steps (`have`) appear `41,459` times across the `2,578` sampled files.
 
 ---
 
-## 3. 五大关键微观代码证据
+## 3. Five Micro-Level Architectural Evidences
 
-### 证据 A：零信任靶子隔离（`Challenge.lean` + `Main.lean` + `comparator.json`）
-- `src/Challenge.lean`（27 行）仅 `import Mathlib`，独立定义 5 个目标命题（以 `by sorry` 占位）。
-- `src/Main.lean`（12 行）仅导入 `Statements` 和 `Supplements.Kernels.MainTheoremsAll`，把内部证明一行一行对接到目标签名。
-- `comparator.json` 锁定仅允许 3 条标准公理（`propext`、`Quot.sound`、`Classical.choice`），并在无网络只读容器里用独立内核（Lean 4.36 + `leanchecker-paranoid` + `nanoda`）重放比对。
-- **工程映射**：任何高风险 AI 编程任务都应把“验收契约/核心测试”与“代码实现”分离并做 SHA256 冻结，防止 Agent 偷改测试来通过门禁。
+### Evidence A: Zero-Trust Target Isolation (`Challenge.lean` + `Main.lean` + `comparator.json`)
+- `src/Challenge.lean` (27 lines) imports only `Mathlib` and declares the 5 target theorems independently (`by sorry` placeholders).
+- `src/Main.lean` (12 lines) imports only `Statements` and `Supplements.Kernels.MainTheoremsAll`, wiring internal proofs line-by-line to the target signatures.
+- `comparator.json` restricts allowed axioms to just 3 standard axioms (`propext`, `Quot.sound`, `Classical.choice`) and verifies inside a network-isolated, read-only container with independent kernels (`Lean 4.36` + `leanchecker-paranoid` + `nanoda`).
+- **Transferable rule**: High-stakes AI coding workflows must separate acceptance contracts/tests from implementation and freeze them via SHA256 manifests so agents cannot silently weaken tests.
 
-### 证据 B：检索降噪黑名单（`src/BuildAid/D1.lean` ~ `D5.lean`）
-5 个文件结构完全一致，每个仅 4 行：
+### Evidence B: Retrieval Noise Blacklists (`src/BuildAid/D1.lean` – `D5.lean`)
+Five structurally identical 4-line files:
 ```lean
 run_cmd Lean.modifyEnv fun env => Lean.LibrarySuggestions.nameDenyListExt.addEntry env "CompanionTheory"
 ```
-分别将 `CompanionTheory`、`CrystallineSemistableComparison`、`GlobalTheory`、`PositivityTheory`、`UpperTheory` 移出自动库检索建议范围。
-- **工程映射**：当代码库超过数万行时，检索/补全噪声会直接引发 Agent 幻觉和错层引用。必须显式维护分层依赖边界与排除黑名单（`.rh-arch.json` 的 `layers` + `deny_imports`）。
+Each removes a high-level namespace (`CompanionTheory`, `CrystallineSemistableComparison`, `GlobalTheory`, `PositivityTheory`, `UpperTheory`) from automatic library suggestion/retrieval.
+- **Transferable rule**: Beyond tens of thousands of lines, retrieval noise causes agent hallucinations and reverse-layer imports. Maintain explicit `layers` and `deny_imports` in `.rh-arch.json`.
 
-### 证据 C：418 个 `*Imports.lean` 聚合门面与声明/实现分离
-例如 `CompanionTheory/AutomorphicTheory/PieriRules/PieriDegreeBounds/` 中，将 `*Statement.lean`（纯声明）、`Imports.lean`（依赖门面）、`Definitions/`（定义）与 `Proofs/`（实现）严格拆开，保证叶节点文件的 `import` 数量停留在 3–4 行。
-- **工程映射**：把“类型契约”、“子包重导出门面”与“核心逻辑实现”拆成小文件，既能显著降低 Agent 每次编辑需要读入的上下文，又能大幅减少增量编译/单测波及范围。
+### Evidence C: 418 `*Imports.lean` Facades & Declaration / Impl Splits
+For instance, under `CompanionTheory/AutomorphicTheory/PieriRules/PieriDegreeBounds/`, `*Statement.lean` (pure declarations), `Imports.lean` (dependency facade), `Definitions/`, and `Proofs/` are separated cleanly so leaf modules stay around 3–4 imports.
+- **Transferable rule**: Separating type contracts, package re-export facades, and core implementations slashes both context window load per edit and incremental test/build blast radius.
 
-### 证据 D：元编程自动变体派生（`CutCptCopy.lean`，91 行）
-当需要将一整条依赖链上的声明批量改写成紧支集（`Cpt`）变体时，作者没有让 LLM 手工复制粘贴几十个文件，而是编写 91 行确定性元程序 `toCopy` / `subst` / `copyAll`：
-1. 沿常量依赖图遍历出受影响闭包（`tainted`, `order`）；
-2. 按显式映射表 `special` + 后缀规则 `suffixed` 重写表达式树；
-3. 逐条通过 `addDecl` 注入并由内核完整校验。
-- **工程映射**：面对 ≥ 3 处结构同构的样板或跨类型变体，优先写小而确定的代码生成脚本并交由编译器/测试门禁验真，严禁让 Agent 人工复制改变量名。
+### Evidence D: Metaprogramming Variant Derivation (`CutCptCopy.lean`, 91 lines)
+When a dependency chain of declarations needed compactly supported (`Cpt`) variants, the authors wrote a 91-line deterministic metaprogram (`toCopy` / `subst` / `copyAll`) instead of having an LLM copy-paste dozens of files:
+1. Traverse the constant dependency closure (`tainted`, `order`);
+2. Rewrite expression trees via explicit `special` mappings + `suffixed` rules;
+3. Inject via `addDecl` and verify every generated theorem in the kernel.
+- **Transferable rule**: Replace `≥ 3` isomorphic boilerplate variants with a small deterministic generator validated by compiler/tests rather than manual agent copy-pasting.
 
-### 证据 E：显式配置约束与内容寻址缓存（`lakefile.toml` + `verification/CACHE.md`）
-- `lakefile.toml` 强制 `autoImplicit = false`、`relaxedAutoImplicit = false`（杜绝隐式拼写幻觉），并为高负载子库 `GroundTheoryFields` 单独设置 `synthInstance.maxHeartbeats = 400000` 资源上限。
-- `CACHE.md` 展示了一套严格的离线缓存治理：每个产物按输入指纹内容寻址、恢复前逐文件校 SHA256、不匹配即离线沙盒编译回退、且子任务显式传 `-j1`（单任务确定性，仅在独立模块间并行）。同时明确警告“社区缓存不能替代独立验真”。
+### Evidence E: Strict Config Guardrails & Content-Addressed Caching (`lakefile.toml` + `verification/CACHE.md`)
+- `lakefile.toml` enforces `autoImplicit = false` and `relaxedAutoImplicit = false` (eliminating typo-created implicit variables) and caps resource usage on heavy sub-libraries (e.g., `synthInstance.maxHeartbeats = 400000` on `GroundTheoryFields`).
+- `CACHE.md` documents content-addressed artifact caching with per-file SHA256 verification before restoration, offline fallback compilation on mismatch, `-j1` determinism per sub-task (parallelism across independent modules only), and an explicit warning that community cache cannot replace independent verification.
 
 ---
 
-## 4. 不可偷师的真实边界（防过度乐观）
+## 4. Honest Limits (Avoiding Over-Optimistic Extrapolation)
 
-1. **过程轨迹缺失**：最终源码不包含 41 天里失败的证明分支、人类数学家对关键思路（如转向 Stepanov 方法 + `sqrt(X)` 长度 Theta lifts 链）的直觉引导。
-2. **形式化内核红利**：Lean 4 内核提供 100% 逻辑保真裁判，而通用软件工程（Python/TS/Go）没有等价的完备数学内核，因此必须用**强类型检查 + 契约测试 + 属性测试 + 静态安全审计**组合逼近确定性裁判。
-3. **算力反馈闭环差异**：百核大内存机器支持极高频率的“生成-编译-回溯”搜索；个人开发机上应通过**缩小模块粒度（≤120行）+ 增量单测**来模拟低延迟反馈闭环。
+1. **Missing search trajectory**: The final source snapshot does not show rejected proof branches from the 41-day run or human mathematical steering (such as switching to Stepanov's method + `sqrt(X)`-length Theta lift chains).
+2. **Formal kernel advantage**: Lean 4 provides 100% logical soundness checking; general software engineering (Python/TS/Go) lacks an equivalent proof kernel and therefore relies on combining **type checking + contract/property tests + static security gates** to approximate deterministic adjudication.
+3. **Compute feedback differences**: Hundreds of GBs of RAM enable rapid parallel proof-search backtracking; on a developer workstation, keeping modules small (`≤ 120` lines default, or project-tuned thresholds) + incremental unit tests gives a fast local feedback loop.

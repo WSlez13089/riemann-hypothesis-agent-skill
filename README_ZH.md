@@ -30,7 +30,7 @@
 - 静态门禁把隐式魔法与逃生舱（`sorry`/`admit`、`import *`、占位桩）**全部归零**。
 
 我们把这套可迁移骨架蒸馏成了两样东西（支持 Python / TypeScript / JavaScript / Rust / Go / Lean）：
-1. **一本给 AI 看的行动铁律**（[`SKILL.md`](SKILL.md)）：引导 Claude Code / Cursor / Codex / Antigravity 先锁靶子、再分层、只写低耦合微模块；
+1. **一本给 AI 看的行动铁律**（[`SKILL.md`](SKILL.md) 英文 / [`SKILL_ZH.md`](SKILL_ZH.md) 中文）：引导 Claude Code / Cursor / Codex / Antigravity 先锁靶子、再分层、只写低耦合微模块；
 2. **一把人类与 CI 都能跑的静态门禁**（[`scripts/rh_arch_gate.py`](scripts/rh_arch_gate.py)）：纯 Python 3.12+ 标准库、零第三方依赖。
 
 <p align="center">
@@ -94,7 +94,7 @@ rh-arch-gate verify-challenge /path/to/your-repo --manifest /path/to/your-repo/.
 
 ## 核心内容：七大工程铁律（`RH-01` ~ `RH-07`）
 
-抽样细节见 [实证考古报告](references/empirical-archaeology.md)。
+抽样细节见 [实证考古报告](references/empirical-archaeology.zh.md)。
 
 | 编号 | 铁律 | 黎曼仓库实证发现 | 落地到你的项目里是什么 |
 | :--- | :--- | :--- | :--- |
@@ -125,6 +125,11 @@ rh-arch-gate verify-challenge /path/to/your-repo --manifest /path/to/your-repo/.
 ```bash
 python -W error -m unittest discover -s scripts -v
 ```
+
+### 老项目平滑适配与扫描边界说明
+
+- **渐进调参不卡死老项目**：默认 `120` / `300` / `8` 适合新建微模块；老仓库可在 `.rh-arch.json` 里先调宽 `thresholds`（例如本仓库自身的 [`scripts/.rh-arch.json`](scripts/.rh-arch.json) 设为 `soft_lines: 250`、`max_lines: 300`、`max_imports: 10`），或传 `--soft-lines 250 --max-lines 400 --max-imports 12`，先把 `RH003`–`RH007` 零逃生舱/零环路/靶子防篡改立起来。
+- **扫描精度说明**：Python 使用标准库 `ast` 精确解析；Lean / TypeScript / JavaScript / Rust / Go 采用零依赖词法扫描，以换取免编译环境的轻量开箱体验。
 
 ---
 

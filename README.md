@@ -148,6 +148,11 @@ Run the self-test suite:
 python -W error -m unittest discover -s scripts -v
 ```
 
+### Adapting Thresholds & Scanner Precision
+
+- **Tuning for existing codebases**: The `120` / `300` / `8` defaults target greenfield AI-authored modules. For mature codebases, raise `thresholds` in `.rh-arch.json` (for example, this repo's [`scripts/.rh-arch.json`](scripts/.rh-arch.json) uses `soft_lines: 250`, `max_lines: 300`, `max_imports: 10`) or pass `--soft-lines 250 --max-lines 400 --max-imports 12` to enforce `RH003`–`RH007` immediately without fighting legacy file sizes.
+- **Scanner precision**: Python files use Python's stdlib `ast`; Lean, TypeScript, JavaScript, Rust, and Go use lightweight zero-dependency lexical scanners so the gate requires zero external parsers or build steps.
+
 ---
 
 ## Repository Structure
@@ -161,18 +166,20 @@ riemann-hypothesis-agent-skill/
 ├── examples/
 │   └── reproducible_demo.py          # Self-contained CI-verified temp-repo demo
 ├── references/
-│   └── empirical-archaeology.md      # N=2,578 stratified sampling report
+│   ├── empirical-archaeology.md      # N=2,578 stratified sampling report (English)
+│   └── empirical-archaeology.zh.md   # Stratified sampling report (简体中文)
 ├── scripts/
 │   ├── .rh-arch.json                 # Self-audit config (dogfooding)
 │   ├── rh_arch_gate.py               # CLI entrypoint
 │   ├── rh_gate_engine.py             # Audit & Tarjan SCC cycle detector
 │   ├── rh_gate_challenge.py          # Zero-trust target freeze & SHA256 verifier
 │   ├── rh_gate_config.py             # Config loader & default template
-│   ├── rh_gate_scanners.py           # Multi-language static scanners
+│   ├── rh_gate_scanners.py           # AST (Python) & lexical (multi-lang) scanners
 │   ├── rh_gate_io.py                 # Safe cross-platform paths & strict JSON I/O
 │   ├── rh_gate_contracts.py          # Shared immutable contracts (Layer 0)
 │   └── test_rh_arch_gate.py          # Offline deterministic unit tests
-├── SKILL.md                          # Agent protocol (RH-01 ~ RH-07 workflow)
+├── SKILL.md                          # Agent protocol (English, RH-01 ~ RH-07)
+├── SKILL_ZH.md                       # Agent protocol (简体中文)
 ├── README.md                         # English documentation (default)
 ├── README_ZH.md                      # 简体中文文档
 └── LICENSE                           # MIT
